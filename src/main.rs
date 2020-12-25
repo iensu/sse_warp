@@ -1,3 +1,4 @@
+use api::games::Games;
 use futures::{Stream, StreamExt};
 use std::{
     collections::HashMap,
@@ -10,12 +11,15 @@ use std::{
 use tokio::sync::mpsc;
 use warp::{sse::ServerSentEvent, Filter};
 
+mod api;
+
 #[tokio::main]
 async fn main() {
     pretty_env_logger::init();
 
     let clients = Arc::new(Mutex::new(HashMap::new()));
     let clients = warp::any().map(move || clients.clone());
+    let games: Games = Arc::new(Mutex::new(HashMap::new()));
 
     let chat_send = warp::path("chat")
         .and(warp::post())
@@ -48,7 +52,10 @@ async fn main() {
             .body(INDEX_HTML)
     });
 
-    let routes = index.or(chat_recv).or(chat_send);
+    let routes = index
+        .or(chat_recv)
+        .or(chat_send)
+        .or(api::games::game_routes(games));
 
     warp::serve(routes).run(([127, 0, 0, 1], 3030)).await;
 }
