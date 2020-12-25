@@ -1053,7 +1053,9 @@ version = "0.1.0"
 dependencies = [
  "bytes",
  "futures",
+ "log",
  "pretty_env_logger",
+ "serde_json",
  "tokio",
  "warp",
 ]

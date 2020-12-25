@@ -73,7 +73,7 @@ fn client_connected(
 {
     let my_id = NEXT_CLIENT_ID.fetch_add(1, Ordering::Relaxed);
 
-    eprintln!("New chat client: {}", my_id);
+    log::debug!("New chat client: {}", my_id);
 
     let (tx, rx) = mpsc::unbounded_channel();
 
